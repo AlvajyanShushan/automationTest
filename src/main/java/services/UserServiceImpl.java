@@ -28,7 +28,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(int id) throws SQLException {
-
+        String query
+                = "delete from AppUser where user_id =?";
+        PreparedStatement ps
+                =  DbConnectionConfiguration.getConnection().prepareStatement(query);
+        ps.setInt(1, id);
+        ps.executeUpdate();
     }
 
     @Override
