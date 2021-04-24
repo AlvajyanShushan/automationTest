@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import model.etities.UserEntity;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 import services.UserService;
@@ -11,6 +12,7 @@ import services.UserServiceImpl;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -26,7 +28,9 @@ public class GetAllUsersTest {
                 .queryParam("limit", "10")
                 .when().get("https://gorest.co.in/public-api/users");
         if (response.getStatusCode() == 200) {
-            List<JSONObject> data = response.then().extract().body().jsonPath().get("data");
+           // JSONArray JSONResponseBody = new JSONArray(response.body().("data"));
+
+            List<Object> data = response.then().extract().body().jsonPath().getList("data");
             try {
                 convertJsonDataToUserAndSave(data);
             } catch (Exception e) {
@@ -36,24 +40,23 @@ public class GetAllUsersTest {
 
     }
 
-    private void convertJsonDataToUserAndSave(List<JSONObject> data) throws IOException, SQLException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        for (JSONObject jsonObject : data) {
-            UserEntity userEntity = objectMapper.readValue(String.valueOf(jsonObject), new TypeReference<List<UserEntity>>() {
-            });
+    private void convertJsonDataToUserAndSave(List<Object> data) throws IOException, SQLException {
+ //       ObjectMapper objectMapper = new ObjectMapper();
+//        for (Object jsonObject : data) {
+//            UserEntity userEntity = objectMapper.readValue(new JSONObject(jsonObject), new TypeReference<List<UserEntity>>() {
+//            });
+//        }
+        for (Object jsonObject : data) {
+            UserEntity userEntity = UserEntity.builder()
+                    .userId((Integer) ((LinkedHashMap) jsonObject).get("id"))
+                    .name((String) ((LinkedHashMap) jsonObject).get("name"))
+                    .email((String) ((LinkedHashMap) jsonObject).get("email"))
+                    .gender((String) ((LinkedHashMap) jsonObject).get("gender"))
+                    .status((String) ((LinkedHashMap) jsonObject).get("status"))
+                    .createdAt((String) ((LinkedHashMap) jsonObject).get("created_at"))
+                    .updatedAt((String) ((LinkedHashMap) jsonObject).get("updated_at"))
+                    .build();
             userService.add(userEntity);
         }
-//
-//        for (int i = 0; i < data.size() - 1; i++) {
-//            UserEntity userEntity = UserEntity.builder()
-//                    .name((String) data.get(String.format("name[%s]", i)))
-//                    .email((String) data.get(String.format("email[%s]", i)))
-//                    .gender((String) data.get(String.format("gender[%s]", i)))
-//                    .status((String) data.get(String.format("status[%s]", i)))
-//                    .createdAt((LocalDateTime) data.get(String.format("created_at[%s]", i)))
-//                    .updatedAt((LocalDateTime) data.get(String.format("updated_at[%s]", i)))
-//                    .build();
-//            userEntities.add(userEntity);
-//        }
     }
 }

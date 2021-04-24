@@ -9,20 +9,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
-    Connection connection;
 
     @Override
     public int add(UserEntity userEntity) throws SQLException {
         String query
-                = "insert into AppUser(name,email,gender,status,created_at, update_at) VALUES (?,?,?,?,?,?)";
+                = "insert into AppUser(user_id, name,email,gender,status,created_at, update_at) VALUES (?,?,?,?,?,?,?)";
         PreparedStatement ps
-                = connection.prepareStatement(query);
-        ps.setString(1, userEntity.getName());
-        ps.setString(2, userEntity.getEmail());
-        ps.setString(3, userEntity.getGender());
-        ps.setString(4, userEntity.getStatus());
-        ps.setString(5, String.valueOf(userEntity.getCreatedAt()));
-        ps.setString(6, String.valueOf(userEntity.getUpdatedAt()));
+                = DbConnectionConfiguration.getConnection().prepareStatement(query);
+        ps.setInt(1, userEntity.getUserId());
+        ps.setString(2, userEntity.getName());
+        ps.setString(3, userEntity.getEmail());
+        ps.setString(4, userEntity.getGender());
+        ps.setString(5, userEntity.getStatus());
+        ps.setString(6, userEntity.getCreatedAt());
+        ps.setString(7, userEntity.getUpdatedAt());
         return ps.executeUpdate();
     }
 
