@@ -1,7 +1,9 @@
+package common;
+
 import io.restassured.RestAssured;
 import org.junit.BeforeClass;
 
-public class FunctionalTest {
+public class BaseTest {
 
     @BeforeClass
     public static void setup() {

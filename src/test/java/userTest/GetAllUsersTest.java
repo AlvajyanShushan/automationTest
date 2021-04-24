@@ -1,11 +1,8 @@
 package userTest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import common.BaseTest;
 import io.restassured.response.Response;
 import model.etities.UserEntity;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.junit.Test;
 import services.UserService;
 import services.UserServiceImpl;
@@ -17,7 +14,7 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
-public class GetAllUsersTest {
+public class GetAllUsersTest extends BaseTest {
     UserService userService = new UserServiceImpl();
 
     @Test
@@ -26,7 +23,7 @@ public class GetAllUsersTest {
         Response response = given()
                 .queryParam("page", "1")
                 .queryParam("limit", "10")
-                .when().get("https://gorest.co.in/public-api/users");
+                .when().get("public-api/users");
         if (response.getStatusCode() == 200) {
            // JSONArray JSONResponseBody = new JSONArray(response.body().("data"));
 
