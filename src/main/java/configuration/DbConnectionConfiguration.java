@@ -10,7 +10,7 @@ public class DbConnectionConfiguration {
     private static Connection connection = null;
 
     static {
-        String url = "jdbc:sqlserver://BAGRATM-704;DatabaseName=AutomationTest";
+        String url = "jdbc:sqlserver://localhost:1433;DatabaseName=AutomationTest";
         String user = "sa";
         String password = "adminroot1234!@";
         try {
