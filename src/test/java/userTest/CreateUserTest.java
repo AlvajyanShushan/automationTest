@@ -42,6 +42,40 @@ public class CreateUserTest extends BaseTest {
     }
 
     @Test
+    public void compareCreateUserAndGetByIdPositive() {
+        currentUser = UserDataProvider.NEW_USER;
+        JSONObject jsonObject = Utils.getJsonObject(currentUser);
+        Response response = given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer 6b68ebdf11ed71fe0cf8537799dfaa5b5dafbdf11557175ee6063793afa0e280")
+                .accept("application/json")
+                .when()
+                .body(jsonObject.toJSONString())
+                .post("/public-api/users");
+
+        int userId = response.getBody().jsonPath().getInt("data.id");
+        Response responseGetMethodByUserId= given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer 6b68ebdf11ed71fe0cf8537799dfaa5b5dafbdf11557175ee6063793afa0e280")
+                .accept("application/json")
+                .when()
+                .get(String.format("public-api/users/%s", userId));
+
+        assertThat(responseGetMethodByUserId.getBody().jsonPath().getString("data.name"))
+                .isEqualTo(currentUser.getName());
+
+        assertThat(responseGetMethodByUserId.getBody().jsonPath().getString("data.gender"))
+                .isEqualTo(currentUser.getGender());
+
+        assertThat(responseGetMethodByUserId.getBody().jsonPath().getString("data.email"))
+                .isEqualTo(currentUser.getEmail());
+
+        assertThat(responseGetMethodByUserId.getBody().jsonPath().getString("data.status"))
+                .isEqualTo(currentUser.getStatus());
+    }
+
+
+    @Test
     public void createUserWithWrongEmailNegative() {
         currentUser = UserDataProvider.USER_WITH_WRONG_EMAIL;
         JSONObject jsonObject = Utils.getJsonObject(currentUser);
